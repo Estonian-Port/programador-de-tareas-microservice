@@ -47,50 +47,10 @@ class ProgramacionService(
         return programacionRepository.findByJobId(jobId)
     }
 
-    fun obtenerProgramacionPorPiscina(piscinaId: Long): List<Programacion> {
-        return programacionRepository.findByPiscinaId(piscinaId)
-    }
-
-    fun obtenerProgramacionActivas(): List<Programacion> {
-        return programacionRepository.findProgramacionesActivas()
-    }
-
-    fun actualizarEstadoEjecucion(jobId: String) {
-        val programacion = programacionRepository.findByJobId(jobId) ?: return
-        programacion.fechaUltimaEjecucion = LocalDateTime.now()
-        programacion.proximaEjecucion = calcularProximaEjecucion(programacion.dias, programacion.horaInicio)
-        programacionRepository.save(programacion)
-        println("📝 Programacion actualizada: $jobId - Próxima ejecución: ${programacion.proximaEjecucion}")
-    }
-
-    fun marcarComoError(jobId: String, descripcionError: String) {
-        val programacion = programacionRepository.findByJobId(jobId) ?: return
-        programacion.estado = "ERROR"
-        programacion.descripcionError = descripcionError
-        programacionRepository.save(programacion)
-        println("⚠️ Progra marcada como error: $jobId - $descripcionError")
-    }
-
     fun eliminarProgramacion(jobId: String) {
         val programacion = programacionRepository.findByJobId(jobId) ?: return
         programacionRepository.delete(programacion)
         println("🗑️ Programacion eliminada: $jobId")
-    }
-
-    fun pausarProgramacion(jobId: String) {
-        val programacion = programacionRepository.findByJobId(jobId) ?: return
-        programacion.estado = "PAUSADA"
-        programacion.activa = false
-        programacionRepository.save(programacion)
-        println("⏸️ Programacion pausada: $jobId")
-    }
-
-    fun reanudarProgramacion(jobId: String) {
-        val programacion = programacionRepository.findByJobId(jobId) ?: return
-        programacion.estado = "ACTIVA"
-        programacion.activa = true
-        programacionRepository.save(programacion)
-        println("▶️ Programacion reanudada: $jobId")
     }
 
     fun calcularProximaEjecucion(dias: List<DayOfWeek>, hora: LocalTime): LocalDateTime {

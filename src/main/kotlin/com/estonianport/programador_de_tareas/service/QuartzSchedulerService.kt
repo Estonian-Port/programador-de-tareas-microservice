@@ -5,7 +5,6 @@ import com.estonianport.unique.model.enums.ProgramacionType
 import org.quartz.*
 import org.springframework.stereotype.Service
 import java.time.DayOfWeek
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Service
@@ -86,10 +85,6 @@ class QuartzSchedulerService(
             programacionService.eliminarProgramacion(jobId)
             println("🗑️ Quartz Job eliminado -> $jobId")
         }
-    }
-
-    fun calcularProximaEjecucion(dias: List<DayOfWeek>, hora: LocalTime): LocalDateTime {
-        return programacionService.calcularProximaEjecucion(dias, hora)
     }
 
     private fun diasemanaAQuartz(diaSemana: DayOfWeek): Int {
