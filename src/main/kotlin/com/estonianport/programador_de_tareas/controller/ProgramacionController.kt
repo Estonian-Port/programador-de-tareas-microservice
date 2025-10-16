@@ -7,8 +7,10 @@ import com.estonianport.programador_de_tareas.dto.ProgramacionResponse
 import com.estonianport.programador_de_tareas.service.ProgramacionService
 import com.estonianport.programador_de_tareas.service.QuartzSchedulerService
 import com.estonianport.unique.model.enums.ProgramacionType
+import org.springframework.data.annotation.CreatedBy
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,7 +23,8 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 
 @RestController
-@RequestMapping("/api/scheduler")
+@RequestMapping("/")
+@CrossOrigin("*")
 class SchedulerController(
     private val quartzSchedulerService: QuartzSchedulerService,
     private val programacionService: ProgramacionService
@@ -83,99 +86,4 @@ class SchedulerController(
         }
     }
 
-    @GetMapping("/programacion")
-    fun obtenerTodasLasprogramacion(): ResponseEntity<List<ProgramacionDTO>> {
-        return try {
-            val programacion = programacionService.obtenerProgramacionActivas()
-            val programacionDto = programacion.map { tarea ->
-                ProgramacionDTO(
-                    id = tarea.id,
-                    piscinaId = tarea.piscinaId,
-                    patente = tarea.patente,
-                    comando = tarea.comando,
-                    horaInicio = tarea.horaInicio.toString(),
-                    horaFin = tarea.horaFin.toString(),
-                    dias = tarea.dias.map { it.name },
-                    tipo = tarea.tipo.name,
-                    jobId = tarea.jobId,
-                    estado = tarea.estado,
-                    activa = tarea.activa,
-                    fechaCreacion = tarea.fechaCreacion.toString(),
-                    fechaUltimaEjecucion = tarea.fechaUltimaEjecucion?.toString(),
-                    proximaEjecucion = tarea.proximaEjecucion?.toString(),
-                    descripcionError = tarea.descripcionError
-                )
-            }
-            ResponseEntity.ok(programacionDto)
-        } catch (e: Exception) {
-            println("❌ Error al obtener programacion: ${e.message}")
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emptyList())
-        }
-    }
-
-    @GetMapping("/programacion/piscina/{piscinaId}")
-    fun obtenerprogramacionPorPiscina(@PathVariable piscinaId: Long): ResponseEntity<List<ProgramacionDTO>> {
-        return try {
-            val programacion = programacionService.obtenerProgramacionPorPiscina(piscinaId)
-            val programacionDto = programacion.map { tarea ->
-                ProgramacionDTO(
-                    id = tarea.id,
-                    piscinaId = tarea.piscinaId,
-                    patente = tarea.patente,
-                    comando = tarea.comando,
-                    horaInicio = tarea.horaInicio.toString(),
-                    horaFin = tarea.horaFin.toString(),
-                    dias = tarea.dias.map { it.name },
-                    tipo = tarea.tipo.name,
-                    jobId = tarea.jobId,
-                    estado = tarea.estado,
-                    activa = tarea.activa,
-                    fechaCreacion = tarea.fechaCreacion.toString(),
-                    fechaUltimaEjecucion = tarea.fechaUltimaEjecucion?.toString(),
-                    proximaEjecucion = tarea.proximaEjecucion?.toString(),
-                    descripcionError = tarea.descripcionError
-                )
-            }
-            ResponseEntity.ok(programacionDto)
-        } catch (e: Exception) {
-            println("❌ Error al obtener programacion de piscina: ${e.message}")
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emptyList())
-        }
-    }
-
-    @PutMapping("/programacion/{jobId}/pausar")
-    fun pausarProgramacion(@PathVariable jobId: String): ResponseEntity<ProgramacionResponse> {
-        return try {
-            programacionService.pausarProgramacion(jobId)
-            ResponseEntity.ok(ProgramacionResponse(
-                jobId = jobId,
-                estado = "EXITOSO",
-                mensaje = "Programacion pausada correctamente"
-            ))
-        } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProgramacionResponse(
-                jobId = jobId,
-                estado = "ERROR",
-                mensaje = "Error al pausar: ${e.message}"
-            ))
-        }
-    }
-
-    @PutMapping("/programacion/{jobId}/reanudar")
-    fun reanudarProgramacion(@PathVariable jobId: String): ResponseEntity<ProgramacionResponse> {
-        return try {
-            programacionService.reanudarProgramacion(jobId)
-            ResponseEntity.ok(ProgramacionResponse(
-                jobId = jobId,
-                estado = "EXITOSO",
-                mensaje = "Programacion reanudada correctamente"
-            ))
-        } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProgramacionResponse(
-                jobId = jobId,
-                estado = "ERROR",
-                mensaje = "Error al reanudar: ${e.message}"
-            ))
-        }
-    }
 }

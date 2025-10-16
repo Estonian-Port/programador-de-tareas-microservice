@@ -1,6 +1,5 @@
 package com.estonianport.programador_de_tareas.event
 
-import org.quartz.JobKey
 import org.springframework.context.ApplicationEvent
 
 class ComandoPiscinaEvent(
