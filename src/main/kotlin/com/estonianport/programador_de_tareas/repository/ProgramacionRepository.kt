@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository
 interface ProgramacionRepository : JpaRepository<Programacion, Long> {
     fun findByJobId(jobId: String): Programacion?
     fun findByPiscinaId(piscinaId: Long): List<Programacion>
-    fun findByEstado(estado: String): List<Programacion>
 
     @Query("SELECT p FROM Programacion p WHERE p.estado = 'ACTIVA' ORDER BY p.proximaEjecucion ASC")
     fun findProgramacionesActivas(): List<Programacion>

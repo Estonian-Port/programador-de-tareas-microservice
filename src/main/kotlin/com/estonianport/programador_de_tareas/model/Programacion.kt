@@ -4,6 +4,7 @@ import com.estonianport.unique.model.enums.ProgramacionType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
+import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
@@ -15,6 +16,7 @@ import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+@Entity
 class Programacion(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
